@@ -1,3 +1,4 @@
+import 'package:app_ac4/main-page.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async' as async;
@@ -11,9 +12,17 @@ class home extends StatefulWidget {
 class _HomeState extends State<home> {
   List _selecao = [];
 
+  Future<dynamic> _showAll() async {
+    http.Response response =
+        await http.get("https://aw-loja-api.herokuapp.com/produtos/");
+    List<dynamic> retorno = json.decode(response.body);
+
+    return retorno;
+  }
+
   Future<dynamic> _filter(item, filtro) async {
     http.Response response =
-        await http.get("https://fakestoreapi.com/products");
+        await http.get("https://aw-loja-api.herokuapp.com/produtos/");
     List<dynamic> retorno = json.decode(response.body);
 
     List _resultado = retorno.where((i) => i[item] == filtro).toList();
@@ -21,8 +30,16 @@ class _HomeState extends State<home> {
     return _resultado;
   }
 
+  void _showAllItens() async {
+    List _allItens = await _showAll();
+
+    setState(() {
+      _selecao = _allItens;
+    });
+  }
+
   void _roupasDeHomem() async {
-    List _roupasHomem = await _filter("category", "men's clothing");
+    List _roupasHomem = await _filter("categoria", "masculino");
 
     for (var produto in _roupasHomem) {
       print(produto["id"]);
@@ -36,7 +53,7 @@ class _HomeState extends State<home> {
   }
 
   void _roupasDeMulher() async {
-    List _roupasMulher = await _filter("category", "women's clothing");
+    List _roupasMulher = await _filter("categoria", "feminino");
 
     for (var produto in _roupasMulher) {
       print(produto["id"]);
@@ -50,7 +67,7 @@ class _HomeState extends State<home> {
   }
 
   void _listaDeJoias() async {
-    List _listaJoias = await _filter("category", "jewelery");
+    List _listaJoias = await _filter("categoria", "infantil");
 
     for (var produto in _listaJoias) {
       print(produto["id"]);
@@ -64,6 +81,17 @@ class _HomeState extends State<home> {
   }
 
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) => _showAllItens());
+  }
+
+  List<Widget> _createChildren() {
+    return List<Widget>.generate(_selecao.length, (int index) {
+      return Text(_selecao[index].toString());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +132,7 @@ class _HomeState extends State<home> {
                 ),
                 ListTile(
                   title: const Text(
-                    "Joias",
+                    "Para Crianças",
                     style: TextStyle(color: Colors.black, fontSize: 18),
                     textAlign: TextAlign.center,
                   ),
@@ -126,23 +154,8 @@ class _HomeState extends State<home> {
             iconTheme: IconThemeData(color: Colors.black, size: 100),
           ),
           body: SingleChildScrollView(
-              child: Stack(children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Image.network(_selecao[1]["image"])
-                // for (var item in _selecao)
-                //   Padding(
-                //     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                //     child: Text(item["title"]),
-                //   ),
-                // for (var item in _selecao)
-                //   Padding(
-                //     padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                //     // child: Image.network(item["image"]),
-                //   )
-              ],
-            )
+              child: Column(children: <Widget>[
+            for (var item in _selecao) Itens(item: item)
           ]))),
     );
   }
