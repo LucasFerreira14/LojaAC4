@@ -157,43 +157,45 @@ class _HomeState extends State<Home> {
               shadowColor: Colors.transparent,
               iconTheme: IconThemeData(color: Colors.black, size: 100),
             ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  for (var item in _selecao) Itens(item: item),
-                ],
-              ),
+            body: Center(
+              child: isLoading
+                  ? CircularProgressIndicator(color: AppColors.orange)
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: <Widget>[
+                          for (var item in _selecao) Itens(item: item),
+                        ],
+                      ),
+                    ),
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: isLoading
-                  ? CircularProgressIndicator()
-                  : Container(
-                      decoration: BoxDecoration(
-                          color: AppColors.grayishBlue,
-                          borderRadius: BorderRadius.circular(15)),
-                      height: 60,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.home),
-                                color: AppColors.orange),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.search),
-                                color: AppColors.lightGrayishBlue),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.favorite),
-                                color: AppColors.lightGrayishBlue),
-                            IconButton(
-                                onPressed: () {},
-                                icon: Icon(Icons.manage_accounts),
-                                color: AppColors.lightGrayishBlue),
-                          ]),
-                    ),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: AppColors.grayishBlue,
+                    borderRadius: BorderRadius.circular(15)),
+                height: 60,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.home),
+                          color: AppColors.orange),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.search),
+                          color: AppColors.lightGrayishBlue),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.favorite),
+                          color: AppColors.lightGrayishBlue),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.manage_accounts),
+                          color: AppColors.lightGrayishBlue),
+                    ]),
+              ),
             )));
   }
 }
