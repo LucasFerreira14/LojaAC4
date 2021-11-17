@@ -13,6 +13,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List _selecao = [];
+  bool isLoading = true;
 
   Future<dynamic> _showAll() async {
     http.Response response =
@@ -37,6 +38,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       _selecao = _allItens;
+      isLoading = false;
     });
   }
 
@@ -164,32 +166,34 @@ class _HomeState extends State<Home> {
             ),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: AppColors.grayishBlue,
-                    borderRadius: BorderRadius.circular(15)),
-                height: 60,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.home),
-                          color: AppColors.orange),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.search),
-                          color: AppColors.lightGrayishBlue),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.favorite),
-                          color: AppColors.lightGrayishBlue),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.manage_accounts),
-                          color: AppColors.lightGrayishBlue),
-                    ]),
-              ),
+              child: isLoading
+                  ? CircularProgressIndicator()
+                  : Container(
+                      decoration: BoxDecoration(
+                          color: AppColors.grayishBlue,
+                          borderRadius: BorderRadius.circular(15)),
+                      height: 60,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.home),
+                                color: AppColors.orange),
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.search),
+                                color: AppColors.lightGrayishBlue),
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.favorite),
+                                color: AppColors.lightGrayishBlue),
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(Icons.manage_accounts),
+                                color: AppColors.lightGrayishBlue),
+                          ]),
+                    ),
             )));
   }
 }
