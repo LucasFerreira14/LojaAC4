@@ -1,36 +1,28 @@
-import 'package:app_ac4/modules/home/redirect_page.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
-import 'package:flutter/cupertino.dart';
-import 'dart:convert' show utf8;
 import 'package:flutter/material.dart';
 
-class Itens extends StatefulWidget {
+import 'main_page.dart';
+
+class ProductPage extends StatefulWidget {
   final Map item;
 
-  const Itens({Key? key, required this.item}) : super(key: key);
-
+  const ProductPage({Key? key, required this.item}) : super(key: key);
   @override
-  _ItensState createState() => _ItensState();
-
-  static String utf8convert(String text) {
-    List<int> bytes = text.toString().codeUnits;
-    return utf8.decode(bytes);
-  }
+  State<ProductPage> createState() => _ProductPageState();
 }
 
-class _ItensState extends State<Itens> {
+class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ProductPage(item: widget.item)));
-      },
-      child: Center(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.black, size: 100),
+      ),
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Container(
