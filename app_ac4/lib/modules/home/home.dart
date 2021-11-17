@@ -106,7 +106,7 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.zero,
                 children: [
                   const DrawerHeader(
-                    decoration: BoxDecoration(color: Colors.black),
+                    decoration: BoxDecoration(color: Color(0xFF1C1F28)),
                     padding: EdgeInsets.only(top: 60),
                     child: Text(
                       "Nasa Store",
@@ -168,34 +168,6 @@ class _HomeState extends State<Home> {
                       ),
                     ),
             ),
-            bottomNavigationBar: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: AppColors.grayishBlue,
-                    borderRadius: BorderRadius.circular(15)),
-                height: 60,
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.home),
-                          color: AppColors.orange),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.search),
-                          color: AppColors.lightGrayishBlue),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.favorite),
-                          color: AppColors.lightGrayishBlue),
-                      IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.manage_accounts),
-                          color: AppColors.lightGrayishBlue),
-                    ]),
-              ),
-            )));
+            bottomNavigationBar: BottomNav()));
   }
 }

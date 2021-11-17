@@ -1,4 +1,4 @@
-import 'package:app_ac4/modules/home/redirect_page.dart';
+import 'package:app_ac4/modules/product_page/product_page.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:convert' show utf8;
