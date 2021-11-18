@@ -1,6 +1,9 @@
+import 'package:app_ac4/modules/cart/cart_page.dart';
+import 'package:app_ac4/modules/favorite/fav_page.dart';
+import 'package:app_ac4/modules/home/home_controller.dart';
 import 'package:app_ac4/modules/home/main_page.dart';
+import 'package:app_ac4/modules/search_page/search_page.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
-import 'package:app_ac4/shared/widgets/bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async' as async;
@@ -97,6 +100,19 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void navController(lista, index) {
+    if (lista[index] == false) {
+      lista.forEach((element) {
+        element = false;
+      });
+      lista[index] = true;
+    }
+  }
+
+  List lista = [true, false, false, false];
+  List pages = [CartPage(), FavPage(), SearchPage()];
+  HomeController controller = HomeController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -168,6 +184,48 @@ class _HomeState extends State<Home> {
                       ),
                     ),
             ),
-            bottomNavigationBar: BottomNav()));
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: AppColors.grayishBlue,
+                    borderRadius: BorderRadius.circular(15)),
+                height: 60,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      botao(Icon(Icons.home), 0, lista[0]),
+                      botao(Icon(Icons.search), 1, lista[1]),
+                      botao(Icon(Icons.favorite), 2, lista[2]),
+                      botao(Icon(Icons.shopping_cart), 3, lista[3]),
+                    ]),
+              ),
+            )));
+  }
+
+  Widget botao(icone, index, ativo) {
+    return ativo
+        ? IconButton(onPressed: () {}, icon: icone, color: AppColors.orange)
+        : IconButton(
+            onPressed: () {
+              setState(() {
+                currentButton(index);
+                print('aqui');
+              });
+            },
+            icon: icone,
+            color: AppColors.lightGrayishBlue);
+  }
+
+  void currentButton(index) {
+    var i = 0;
+    if (lista[index] == false) {
+      while (i < 4) {
+        lista[i] = false;
+        i += 1;
+      }
+      lista[index] = true;
+      print(lista);
+    }
   }
 }

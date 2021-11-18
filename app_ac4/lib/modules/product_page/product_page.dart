@@ -1,5 +1,4 @@
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
-import 'package:app_ac4/shared/widgets/bottom_nav.dart';
 import 'package:flutter/material.dart';
 
 import '../home/main_page.dart';
@@ -98,7 +97,6 @@ class _ProductPageState extends State<ProductPage> {
               )
             ],
           ),
-        ),
-        bottomNavigationBar: BottomNav());
+        ));
   }
 }
