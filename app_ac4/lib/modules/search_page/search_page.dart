@@ -20,12 +20,31 @@ class _SearchPageState extends State<SearchPage> {
             shadowColor: Colors.transparent,
             iconTheme: IconThemeData(color: Colors.black, size: 100),
             title: Text(
-              'Detalhes',
+              'Pesquisar itens',
               style: TextStyle(
                   color: AppColors.grayishBlue,
                   fontWeight: FontWeight.bold,
                   fontSize: 23),
             )),
-        body: Container());
+        body: Column(
+          children: [
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child:
+                        Container(width: size.width * 0.7, child: TextField()),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon((Icons.search), color: AppColors.orange),
+                  ),
+                ],
+              ),
+            )
+          ],
+        ));
   }
 }

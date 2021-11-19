@@ -16,16 +16,41 @@ class _CartPageState extends State<CartPage> {
 
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            iconTheme: IconThemeData(color: Colors.black, size: 100),
-            title: Text(
-              'Detalhes',
-              style: TextStyle(
-                  color: AppColors.grayishBlue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 23),
-            )),
-        body: Container());
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          iconTheme: IconThemeData(color: Colors.black, size: 100),
+          title: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.shopping_cart,
+                    color: AppColors.grayishBlue, size: 30),
+              ),
+              Text('Itens no carrinho',
+                  style: TextStyle(
+                      color: AppColors.grayishBlue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25)),
+            ],
+          ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Parece que você não tem itens no carrinho!',
+                  style: TextStyle(color: AppColors.fontColor),
+                ),
+              ),
+              Text(
+                'Veja os nossos produtos e comece as compras =)',
+                style: TextStyle(color: AppColors.fontColor),
+              )
+            ],
+          ),
+        ));
   }
 }

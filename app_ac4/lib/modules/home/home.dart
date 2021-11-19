@@ -110,7 +110,7 @@ class _HomeState extends State<Home> {
   }
 
   List lista = [true, false, false, false];
-  List pages = [CartPage(), FavPage(), SearchPage()];
+  List pages = [null, SearchPage(), FavPage(), CartPage()];
   HomeController controller = HomeController();
 
   @override
@@ -173,17 +173,7 @@ class _HomeState extends State<Home> {
               shadowColor: Colors.transparent,
               iconTheme: IconThemeData(color: Colors.black, size: 100),
             ),
-            body: Center(
-              child: isLoading
-                  ? CircularProgressIndicator(color: AppColors.orange)
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: <Widget>[
-                          for (var item in _selecao) Itens(item: item),
-                        ],
-                      ),
-                    ),
-            ),
+            body: lista[0] ? cards() : pages[controller.currentPage],
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
@@ -210,7 +200,6 @@ class _HomeState extends State<Home> {
             onPressed: () {
               setState(() {
                 currentButton(index);
-                print('aqui');
               });
             },
             icon: icone,
@@ -225,7 +214,19 @@ class _HomeState extends State<Home> {
         i += 1;
       }
       lista[index] = true;
-      print(lista);
     }
+    controller.setPage(index);
   }
+
+  Widget cards() => Center(
+        child: isLoading
+            ? CircularProgressIndicator(color: AppColors.orange)
+            : SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    for (var item in _selecao) Itens(item: item),
+                  ],
+                ),
+              ),
+      );
 }
