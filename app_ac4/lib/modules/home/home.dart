@@ -87,17 +87,11 @@ class _HomeState extends State<Home> {
     Navigator.pop(context);
   }
 
-  final _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((_) => _showAllItens());
-  }
-
-  List<Widget> _createChildren() {
-    return List<Widget>.generate(_selecao.length, (int index) {
-      return Text(_selecao[index].toString());
-    });
   }
 
   void navController(lista, index) {
