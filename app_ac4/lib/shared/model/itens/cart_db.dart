@@ -14,7 +14,7 @@ class CartItensDB {
     if (_database != null) {
       return _database!;
     } else {
-      _database = await _initDB('favorites.db');
+      _database = await _initDB('cart.db');
       return _database!;
     }
   }
@@ -28,24 +28,28 @@ class CartItensDB {
   Future _createDB(Database db, int version) async {
     final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     final integerType = 'INTEGER NOT NULL';
+    final boolType = 'BOOLEAN NOT NULL';
 
     await db.execute('''
-CREATE TABLE $tableConfigs ( 
+CREATE TABLE $tableCart ( 
   ${SavedCartItens.id} $idType, 
   ${SavedCartItens.idProduto} $integerType,
+  ${SavedCartItens.isSaved} $boolType
+  )
 ''');
   }
 
-  Future<CartItens> create(CartItens configs) async {
+  Future<CartItens> create(CartItens itens) async {
     final db = await instance.database;
-    final id = await db.insert(tableConfigs, configs.toJson());
-    return configs.copy(id: id);
+    final id = await db.insert(tableCart, itens.toJson());
+
+    return itens.copy(id: id);
   }
 
   Future<CartItens> readConfig(int id) async {
     final db = await instance.database;
     final maps = await db.query(
-      tableConfigs,
+      tableCart,
       columns: SavedCartItens.values,
       where: '${SavedCartItens.id} = ?',
       whereArgs: [id],
@@ -58,17 +62,17 @@ CREATE TABLE $tableConfigs (
     }
   }
 
-  Future<List<CartItens>> readAllConfigs() async {
+  Future<List<CartItens>> readAllItens() async {
     final db = await instance.database;
-
-    final result = await db.query(tableConfigs);
+    final orderBy = '${SavedCartItens.idProduto} ASC';
+    final result = await db.query(tableCart, orderBy: orderBy);
 
     return result.map((json) => CartItens.fromJson(json)).toList();
   }
 
   Future<int> delete(int id) async {
     final db = await instance.database;
-    return await db.delete(tableConfigs,
+    return await db.delete(tableCart,
         where: '${SavedCartItens.idProduto} = ?', whereArgs: [id]);
   }
 

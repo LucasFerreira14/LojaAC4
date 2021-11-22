@@ -1,3 +1,7 @@
+import 'package:app_ac4/shared/model/favorites/favorites.dart';
+import 'package:app_ac4/shared/model/favorites/favorites_db.dart';
+import 'package:app_ac4/shared/model/itens/cart.dart';
+import 'package:app_ac4/shared/model/itens/cart_db.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -5,13 +9,23 @@ import '../home/main_page.dart';
 
 class ProductPage extends StatefulWidget {
   final Map item;
-
-  const ProductPage({Key? key, required this.item}) : super(key: key);
+  const ProductPage({
+    Key? key,
+    required this.item,
+  }) : super(key: key);
   @override
   State<ProductPage> createState() => _ProductPageState();
 }
 
 class _ProductPageState extends State<ProductPage> {
+  bool? itemSalvo = false;
+  bool? itemCarrinho = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -75,28 +89,77 @@ class _ProductPageState extends State<ProductPage> {
                       backgroundColor:
                           MaterialStateProperty.all(AppColors.orange),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      addCart();
+                    },
                     child: Text(
                         'Adicionar ao carrinho: ' +
                             "R\$ " +
                             (widget.item["preco"]).toString(),
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side:
-                          BorderSide(color: AppColors.grayishBlue, width: 2.0),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                      ),
-                    ),
-                    child: Icon(Icons.favorite, color: AppColors.grayishBlue),
-                    onPressed: () {},
-                  ),
+                  itemSalvo!
+                      ? OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                  color: AppColors.grayishBlue, width: 2.0),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8)),
+                              ),
+                              backgroundColor: AppColors.grayishBlue),
+                          child: Icon(Icons.favorite, color: Colors.white),
+                          onPressed: () {
+                            addFavorite();
+                          },
+                        )
+                      : OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                                color: AppColors.grayishBlue, width: 2.0),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(8)),
+                            ),
+                          ),
+                          child: Icon(Icons.favorite,
+                              color: AppColors.grayishBlue),
+                          onPressed: () {
+                            addFavorite();
+                          },
+                        )
                 ],
               )
             ],
           ),
         ));
+  }
+
+  void addCart() async {
+    if (itemCarrinho == false) {
+      final item = CartItens(idProduto: widget.item['id'], isSaved: 'true');
+      await CartItensDB.instance.create(item);
+      itemCarrinho = true;
+      print('aqui');
+    } else {
+      var item = widget.item['id'];
+      await CartItensDB.instance.delete(item);
+      itemCarrinho = false;
+      print('desconect');
+    }
+  }
+
+  void addFavorite() async {
+    if (itemSalvo == false) {
+      final item = Favorites(idProduto: widget.item['id'], isSaved: 'true');
+      await SavedFavoritesDB.instance.create(item);
+      itemSalvo = true;
+      print('aqui');
+    } else {
+      var item = widget.item['id'];
+      await SavedFavoritesDB.instance.delete(item);
+      itemSalvo = false;
+      print('desconect');
+    }
   }
 }

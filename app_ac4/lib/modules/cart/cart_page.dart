@@ -1,3 +1,5 @@
+import 'package:app_ac4/shared/model/itens/cart.dart';
+import 'package:app_ac4/shared/model/itens/cart_db.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +12,19 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  late List<CartItens> cartItens;
+
+  @override
+  void initState() {
+    super.initState();
+    refreshConfigs();
+  }
+
+  @override
+  Future refreshConfigs() async {
+    cartItens = await CartItensDB.instance.readAllItens();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

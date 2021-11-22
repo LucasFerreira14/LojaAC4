@@ -28,7 +28,9 @@ class _ItensState extends State<Itens> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ProductPage(item: widget.item)));
+                builder: (context) => ProductPage(
+                      item: widget.item,
+                    )));
       },
       child: Center(
         child: Padding(
@@ -58,8 +60,9 @@ class _ItensState extends State<Itens> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  ProductPage(item: widget.item)));
+                              builder: (context) => ProductPage(
+                                    item: widget.item,
+                                  )));
                     },
                     icon: Container(
                       decoration: BoxDecoration(

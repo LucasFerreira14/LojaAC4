@@ -14,7 +14,7 @@ class SavedFavoritesDB {
     if (_database != null) {
       return _database!;
     } else {
-      _database = await _initDB('favorites.db');
+      _database = await _initDB('favoriteItens.db');
       return _database!;
     }
   }
@@ -28,47 +28,51 @@ class SavedFavoritesDB {
   Future _createDB(Database db, int version) async {
     final idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
     final integerType = 'INTEGER NOT NULL';
+    final boolType = 'BOOLEAN NOT NULL';
 
     await db.execute('''
-CREATE TABLE $tableConfigs ( 
+CREATE TABLE $tableFavorite ( 
   ${SavedFavorites.id} $idType, 
   ${SavedFavorites.idProduto} $integerType,
+  ${SavedFavorites.isSaved} $boolType
+  )
 ''');
   }
 
-  Future<Favorits> create(Favorits configs) async {
+  Future<Favorites> create(Favorites itens) async {
     final db = await instance.database;
-    final id = await db.insert(tableConfigs, configs.toJson());
-    return configs.copy(id: id);
+    final id = await db.insert(tableFavorite, itens.toJson());
+
+    return itens.copy(id: id);
   }
 
-  Future<Favorits> readConfig(int id) async {
+  Future<Favorites> readConfig(int id) async {
     final db = await instance.database;
     final maps = await db.query(
-      tableConfigs,
+      tableFavorite,
       columns: SavedFavorites.values,
       where: '${SavedFavorites.id} = ?',
       whereArgs: [id],
     );
 
     if (maps.isNotEmpty) {
-      return Favorits.fromJson(maps.first);
+      return Favorites.fromJson(maps.first);
     } else {
       throw Exception('Id $id not found');
     }
   }
 
-  Future<List<Favorits>> readAllConfigs() async {
+  Future<List<Favorites>> readAllItens() async {
     final db = await instance.database;
+    final orderBy = '${SavedFavorites.idProduto} ASC';
+    final result = await db.query(tableFavorite, orderBy: orderBy);
 
-    final result = await db.query(tableConfigs);
-
-    return result.map((json) => Favorits.fromJson(json)).toList();
+    return result.map((json) => Favorites.fromJson(json)).toList();
   }
 
   Future<int> delete(int id) async {
     final db = await instance.database;
-    return await db.delete(tableConfigs,
+    return await db.delete(tableFavorite,
         where: '${SavedFavorites.idProduto} = ?', whereArgs: [id]);
   }
 
