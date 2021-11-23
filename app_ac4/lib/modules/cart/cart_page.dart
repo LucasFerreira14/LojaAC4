@@ -41,7 +41,6 @@ class _CartPageState extends State<CartPage> {
   }
 
   void _showAllItens() async {
-    isLoading = true;
     List _allItens = await _showAll();
     List lista = [];
 
@@ -120,32 +119,34 @@ class _CartPageState extends State<CartPage> {
                           )
                         ],
                       )
-                    : Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Total: ${total}',
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.grayishBlue)),
-                              ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                      const EdgeInsets.all(15)),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      AppColors.orange),
+                    : SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Total: ${total}',
+                                    style: TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.grayishBlue)),
+                                ElevatedButton(
+                                  style: ButtonStyle(
+                                    padding: MaterialStateProperty.all(
+                                        const EdgeInsets.all(15)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        AppColors.orange),
+                                  ),
+                                  onPressed: () {
+                                    _showMyDialog();
+                                  },
+                                  child: Text('Pagar'),
                                 ),
-                                onPressed: () {
-                                  _showMyDialog();
-                                },
-                                child: Text('Pagar'),
-                              ),
-                            ],
-                          ),
-                          cards(),
-                        ],
+                              ],
+                            ),
+                            cards(),
+                          ],
+                        ),
                       )),
         bottomNavigationBar: NavButton(active: [false, false, false, true]));
   }
@@ -168,7 +169,7 @@ class _CartPageState extends State<CartPage> {
                         },
                         child: Center(
                           child: Padding(
-                            padding: const EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.only(top: 10.0),
                             child: Container(
                               decoration: BoxDecoration(
                                   boxShadow: [
@@ -182,7 +183,7 @@ class _CartPageState extends State<CartPage> {
                                   ],
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(18)),
-                              height: 150,
+                              height: 117,
                               width: 500,
                               child: Padding(
                                 padding: const EdgeInsets.all(15.0),
@@ -194,7 +195,7 @@ class _CartPageState extends State<CartPage> {
                                     Text(
                                       Itens.utf8convert(item["nome"]),
                                       style: TextStyle(
-                                          fontSize: 15, color: AppColors.azul),
+                                          fontSize: 13, color: AppColors.azul),
                                       textAlign: TextAlign.center,
                                     ),
                                     Row(
@@ -214,7 +215,13 @@ class _CartPageState extends State<CartPage> {
                                             var id = item['id'];
                                             await CartItensDB.instance
                                                 .delete(id);
-                                            refreshConfigs();
+                                            Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        super.widget));
+                                            initState();
                                           },
                                           child: Text('Remover',
                                               style: TextStyle(

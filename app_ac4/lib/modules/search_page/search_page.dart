@@ -25,12 +25,16 @@ class _SearchPageState extends State<SearchPage> {
     http.Response response =
         await http.get("https://aw-loja-api.herokuapp.com/produtos/");
     List<dynamic> retorno = json.decode(response.body);
-
     return retorno;
   }
 
   void _showAllItens() async {
     List _allItens = await _showAll();
+
+    setState(() {
+      _selecao = _allItens;
+      isLoading = false;
+    });
   }
 
   @override
@@ -42,6 +46,29 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   @override
+  TextEditingController _fieldController = TextEditingController();
+
+  void search() async {
+    isLoading = true;
+    lista = [];
+    setState(() {
+      lookingFor = _fieldController.text;
+    });
+
+    for (var item in _selecao) {
+      if (Itens.utf8convert(item["nome"].toUpperCase())
+          .contains(lookingFor!.toUpperCase())) {
+        lista.add(item);
+      }
+    }
+
+    if (lookingFor == '') {
+      lista = [];
+    }
+
+    isLoading = false;
+  }
+
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
@@ -57,39 +84,68 @@ class _SearchPageState extends State<SearchPage> {
                   fontWeight: FontWeight.bold,
                   fontSize: 23),
             )),
-        body: Column(
-          children: [
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Container(
-                        width: size.width * 0.7,
-                        child: TextField(
-                            onChanged: (lookingFor) =>
-                                setState(() => this.lookingFor = lookingFor))),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      for (var item in _selecao) {
-                        if (Itens.utf8convert(item["nome"])
-                            .contains(lookingFor!)) {
-                          lista.add(item);
-                        }
-                      }
-                      print(lista);
-                    },
-                    icon: Icon((Icons.search), color: AppColors.orange),
-                  ),
-                ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Container(
+                          width: size.width * 0.7,
+                          child: TextField(
+                            controller: _fieldController,
+                            // onChanged: (lookingFor) => setState(
+                            //     () => this.lookingFor = lookingFor)
+                          )),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        search();
+                      },
+                      icon: Icon((Icons.search), color: AppColors.orange),
+                    ),
+                  ],
+                ),
               ),
-            )
-          ],
+              SingleChildScrollView(
+                child: isLoading
+                    ? CircularProgressIndicator(color: AppColors.orange)
+                    : lista.isEmpty
+                        ? Padding(
+                            padding: const EdgeInsets.all(18.0),
+                            child: Center(
+                              child: Text(
+                                'Não encontrei nada :/',
+                                style: TextStyle(color: AppColors.fontColor),
+                              ),
+                            ),
+                          )
+                        : Column(
+                            children: [
+                              cards(),
+                            ],
+                          ),
+              )
+            ],
+          ),
         ),
         bottomNavigationBar: NavButton(
           active: [false, true, false, false],
         ));
   }
+
+  Widget cards() => Center(
+        child: isLoading
+            ? CircularProgressIndicator(color: AppColors.orange)
+            : SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    for (var item in lista) Itens(item: item),
+                  ],
+                ),
+              ),
+      );
 }
