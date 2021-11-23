@@ -1,11 +1,8 @@
 import 'dart:convert';
-
-import 'package:app_ac4/modules/cart/cart_page.dart';
-import 'package:app_ac4/modules/home/home.dart';
-import 'package:app_ac4/modules/search_page/search_page.dart';
 import 'package:app_ac4/shared/model/favorites/favorites.dart';
 import 'package:app_ac4/shared/model/favorites/favorites_db.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
+import 'package:app_ac4/shared/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async' as async;
@@ -13,7 +10,8 @@ import 'dart:async' as async;
 import '../home/main_page.dart';
 
 class FavPage extends StatefulWidget {
-  const FavPage({Key? key}) : super(key: key);
+  final List? item;
+  const FavPage({Key? key, this.item}) : super(key: key);
   @override
   State<FavPage> createState() => _FavPageState();
 }
@@ -23,20 +21,12 @@ class _FavPageState extends State<FavPage> {
   bool isLoading = false;
   List _selecao = [];
 
-  Future<dynamic> _showAll() async {
-    http.Response response =
-        await http.get("https://aw-loja-api.herokuapp.com/produtos/");
-    List<dynamic> retorno = json.decode(response.body);
-
-    return retorno;
-  }
-
-  void _showAllItens() async {
-    List _allItens = await _showAll();
+  void showAllItens() async {
+    List? _allItens = widget.item;
     List lista = [];
 
     for (var element in favorites) {
-      for (var item in _allItens) {
+      for (var item in _allItens!) {
         if (element.idProduto == item['id']) {
           lista.add(item);
         }
@@ -52,13 +42,13 @@ class _FavPageState extends State<FavPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) => _showAllItens());
     refreshConfigs();
   }
 
   Future refreshConfigs() async {
     setState(() => isLoading = true);
     favorites = await SavedFavoritesDB.instance.readAllItens();
+    showAllItens();
     setState(() => isLoading = false);
   }
 
@@ -109,38 +99,7 @@ class _FavPageState extends State<FavPage> {
                         ],
                       ),
                     )),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            decoration: BoxDecoration(
-                color: AppColors.grayishBlue,
-                borderRadius: BorderRadius.circular(15)),
-            height: 60,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  botao(Icon(Icons.home), 0, false, Home()),
-                  botao(Icon(Icons.search), 1, false, SearchPage()),
-                  botao(Icon(Icons.favorite), 2, true, FavPage()),
-                  botao(Icon(Icons.shopping_cart), 3, false, CartPage()),
-                ]),
-          ),
-        ));
-  }
-
-  Widget botao(icone, index, ativo, page) {
-    return ativo
-        ? IconButton(onPressed: () {}, icon: icone, color: AppColors.orange)
-        : IconButton(
-            onPressed: () {
-              setState(() {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => page),
-                );
-              });
-            },
-            icon: icone,
-            color: AppColors.lightGrayishBlue);
+        bottomNavigationBar: NavButton(active: [false, false, true, false]));
   }
 
   Widget cards() => Center(

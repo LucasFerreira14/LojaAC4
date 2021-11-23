@@ -5,7 +5,7 @@ class AppColors {
   static final grayishBlue = Color(0xFF1C1F28);
   static final yellow = Color(0xFFE3F626);
   static final lightGray = Color(0xFFF9F9F9);
-  static final fontColor = Color(0xFFCBCBCB);
+  static final fontColor = Color(0xFF7F7F7F);
   static final lightGrayishBlue = Color(0XFF3E424B);
   static final background = Color(0xffE8E8E8);
   static final azul = Color(0xFF2E3191);

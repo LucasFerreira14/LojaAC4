@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-import 'package:app_ac4/modules/cart/cart_page.dart';
-import 'package:app_ac4/modules/favorite/fav_page.dart';
-import 'package:app_ac4/modules/home/home.dart';
 import 'package:app_ac4/modules/home/main_page.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
+import 'package:app_ac4/shared/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async' as async;
@@ -90,37 +88,8 @@ class _SearchPageState extends State<SearchPage> {
             )
           ],
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Container(
-            decoration: BoxDecoration(
-                color: AppColors.grayishBlue,
-                borderRadius: BorderRadius.circular(15)),
-            height: 60,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  botao(Icon(Icons.home), 0, false, Home()),
-                  botao(Icon(Icons.search), 1, true, SearchPage()),
-                  botao(Icon(Icons.favorite), 2, false, FavPage()),
-                  botao(Icon(Icons.shopping_cart), 3, false, CartPage()),
-                ]),
-          ),
+        bottomNavigationBar: NavButton(
+          active: [false, true, false, false],
         ));
-  }
-
-  Widget botao(icone, index, ativo, page) {
-    return ativo
-        ? IconButton(onPressed: () {}, icon: icone, color: AppColors.orange)
-        : IconButton(
-            onPressed: () {
-              setState(() {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => page),
-                );
-              });
-            },
-            icon: icone,
-            color: AppColors.lightGrayishBlue);
   }
 }
