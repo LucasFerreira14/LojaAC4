@@ -51,14 +51,14 @@ CREATE TABLE $tableFavorite (
     final maps = await db.query(
       tableFavorite,
       columns: SavedFavorites.values,
-      where: '${SavedFavorites.id} = ?',
+      where: '${SavedFavorites.idProduto} = ?',
       whereArgs: [id],
     );
 
     if (maps.isNotEmpty) {
       return Favorites.fromJson(maps.first);
     } else {
-      throw Exception('Id $id not found');
+      return Favorites(idProduto: id, isSaved: 'false');
     }
   }
 

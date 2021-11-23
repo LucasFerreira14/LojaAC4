@@ -9,7 +9,7 @@ class ControllerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'NasaStore',
-      initialRoute: '/home',
+      initialRoute: '/splash',
       debugShowCheckedModeBanner: false,
       routes: {
         '/splash': (context) => SplashPage(),

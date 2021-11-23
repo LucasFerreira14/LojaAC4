@@ -1,3 +1,4 @@
+import 'package:app_ac4/modules/cart/cart_page.dart';
 import 'package:app_ac4/shared/model/favorites/favorites.dart';
 import 'package:app_ac4/shared/model/favorites/favorites_db.dart';
 import 'package:app_ac4/shared/model/itens/cart.dart';
@@ -18,12 +19,24 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
-  bool? itemSalvo = false;
-  bool? itemCarrinho = false;
+  late CartItens cartItens;
+  late Favorites favorites;
+  bool isLoading = false;
+  bool savedFav = false;
 
   @override
   void initState() {
     super.initState();
+    refreshConfigs();
+  }
+
+  Future refreshConfigs() async {
+    setState(() => isLoading = true);
+    favorites = await SavedFavoritesDB.instance.readConfig(widget.item['id']);
+
+    cartItens = await CartItensDB.instance.readConfig(widget.item['id']);
+    savedFav = (favorites.isSaved == 'false');
+    setState(() => isLoading = false);
   }
 
   @override
@@ -41,7 +54,16 @@ class _ProductPageState extends State<ProductPage> {
                   color: AppColors.grayishBlue,
                   fontWeight: FontWeight.bold,
                   fontSize: 23),
-            )),
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => CartPage()));
+                },
+              )
+            ]),
         body: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
@@ -70,9 +92,9 @@ class _ProductPageState extends State<ProductPage> {
                     child: Text(Itens.utf8convert(widget.item["nome"]),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                        )),
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.azul)),
                   ),
                   Text(Itens.utf8convert(widget.item["descricao"]),
                       textAlign: TextAlign.center,
@@ -98,36 +120,7 @@ class _ProductPageState extends State<ProductPage> {
                             (widget.item["preco"]).toString(),
                         style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
-                  itemSalvo!
-                      ? OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                  color: AppColors.grayishBlue, width: 2.0),
-                              shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(8)),
-                              ),
-                              backgroundColor: AppColors.grayishBlue),
-                          child: Icon(Icons.favorite, color: Colors.white),
-                          onPressed: () {
-                            addFavorite();
-                          },
-                        )
-                      : OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(
-                                color: AppColors.grayishBlue, width: 2.0),
-                            shape: const RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                            ),
-                          ),
-                          child: Icon(Icons.favorite,
-                              color: AppColors.grayishBlue),
-                          onPressed: () {
-                            addFavorite();
-                          },
-                        )
+                  botaoFav()
                 ],
               )
             ],
@@ -136,30 +129,48 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void addCart() async {
-    if (itemCarrinho == false) {
-      final item = CartItens(idProduto: widget.item['id'], isSaved: 'true');
-      await CartItensDB.instance.create(item);
-      itemCarrinho = true;
-      print('aqui');
-    } else {
-      var item = widget.item['id'];
-      await CartItensDB.instance.delete(item);
-      itemCarrinho = false;
-      print('desconect');
-    }
+    final item = CartItens(idProduto: widget.item['id'], isSaved: 'true');
+    await CartItensDB.instance.create(item);
+
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => super.widget));
   }
 
   void addFavorite() async {
-    if (itemSalvo == false) {
+    if (favorites.isSaved == 'false') {
       final item = Favorites(idProduto: widget.item['id'], isSaved: 'true');
       await SavedFavoritesDB.instance.create(item);
-      itemSalvo = true;
-      print('aqui');
     } else {
       var item = widget.item['id'];
       await SavedFavoritesDB.instance.delete(item);
-      itemSalvo = false;
-      print('desconect');
     }
+    Navigator.pushReplacement(context,
+        MaterialPageRoute(builder: (BuildContext context) => super.widget));
   }
+
+  Widget botaoFav() => savedFav
+      ? OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            side: BorderSide(color: AppColors.grayishBlue, width: 2.0),
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+          ),
+          child: Icon(Icons.favorite, color: AppColors.grayishBlue),
+          onPressed: () {
+            addFavorite();
+          },
+        )
+      : OutlinedButton(
+          style: OutlinedButton.styleFrom(
+              side: BorderSide(color: AppColors.grayishBlue, width: 2.0),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+              ),
+              backgroundColor: AppColors.grayishBlue),
+          child: Icon(Icons.favorite, color: Colors.white),
+          onPressed: () {
+            addFavorite();
+          },
+        );
 }

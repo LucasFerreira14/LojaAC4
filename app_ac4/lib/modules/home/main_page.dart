@@ -80,7 +80,10 @@ class _ItensState extends State<Itens> {
                   Padding(padding: EdgeInsets.only(bottom: 20)),
                   Text(
                     Itens.utf8convert(widget.item["nome"]),
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.azul),
                     textAlign: TextAlign.center,
                   ),
                   Padding(padding: EdgeInsets.only(bottom: 20)),

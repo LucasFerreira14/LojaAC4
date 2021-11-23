@@ -3,6 +3,10 @@ import 'package:app_ac4/modules/favorite/fav_page.dart';
 import 'package:app_ac4/modules/home/home_controller.dart';
 import 'package:app_ac4/modules/home/main_page.dart';
 import 'package:app_ac4/modules/search_page/search_page.dart';
+import 'package:app_ac4/shared/model/favorites/favorites.dart';
+import 'package:app_ac4/shared/model/favorites/favorites_db.dart';
+import 'package:app_ac4/shared/model/itens/cart.dart';
+import 'package:app_ac4/shared/model/itens/cart_db.dart';
 import 'package:app_ac4/shared/themes/colors/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +19,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  late List<Favorites> favorites;
+  late List<CartItens> cartItens;
   List _selecao = [];
   bool isLoading = true;
 
@@ -91,21 +97,16 @@ class _HomeState extends State<Home> {
 
   void initState() {
     super.initState();
+    refreshConfigs();
     WidgetsBinding.instance!.addPostFrameCallback((_) => _showAllItens());
   }
 
-  void navController(lista, index) {
-    if (lista[index] == false) {
-      lista.forEach((element) {
-        element = false;
-      });
-      lista[index] = true;
-    }
-  }
+  Future refreshConfigs() async {
+    cartItens = await CartItensDB.instance.readAllItens();
 
-  List lista = [true, false, false, false];
-  List pages = [null, SearchPage(), FavPage(), CartPage()];
-  HomeController controller = HomeController();
+    favorites = await SavedFavoritesDB.instance.readAllItens();
+    isLoading = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,8 +167,15 @@ class _HomeState extends State<Home> {
               backgroundColor: Colors.transparent,
               shadowColor: Colors.transparent,
               iconTheme: IconThemeData(color: Colors.black, size: 100),
+              title: Text(
+                'Nossos Produtos',
+                style: TextStyle(
+                    color: AppColors.grayishBlue,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 23),
+              ),
             ),
-            body: lista[0] ? cards() : pages[controller.currentPage],
+            body: cards(),
             bottomNavigationBar: Padding(
               padding: const EdgeInsets.all(15.0),
               child: Container(
@@ -178,38 +186,28 @@ class _HomeState extends State<Home> {
                 child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      botao(Icon(Icons.home), 0, lista[0]),
-                      botao(Icon(Icons.search), 1, lista[1]),
-                      botao(Icon(Icons.favorite), 2, lista[2]),
-                      botao(Icon(Icons.shopping_cart), 3, lista[3]),
+                      botao(Icon(Icons.home), 0, true, Home()),
+                      botao(Icon(Icons.search), 1, false, SearchPage()),
+                      botao(Icon(Icons.favorite), 2, false, FavPage()),
+                      botao(Icon(Icons.shopping_cart), 3, false, CartPage()),
                     ]),
               ),
             )));
   }
 
-  Widget botao(icone, index, ativo) {
+  Widget botao(icone, index, ativo, page) {
     return ativo
         ? IconButton(onPressed: () {}, icon: icone, color: AppColors.orange)
         : IconButton(
             onPressed: () {
               setState(() {
-                currentButton(index);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => page),
+                );
               });
             },
             icon: icone,
             color: AppColors.lightGrayishBlue);
-  }
-
-  void currentButton(index) {
-    var i = 0;
-    if (lista[index] == false) {
-      while (i < 4) {
-        lista[i] = false;
-        i += 1;
-      }
-      lista[index] = true;
-    }
-    controller.setPage(index);
   }
 
   Widget cards() => Center(

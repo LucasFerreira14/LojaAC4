@@ -51,14 +51,14 @@ CREATE TABLE $tableCart (
     final maps = await db.query(
       tableCart,
       columns: SavedCartItens.values,
-      where: '${SavedCartItens.id} = ?',
+      where: '${SavedCartItens.idProduto} = ?',
       whereArgs: [id],
     );
 
     if (maps.isNotEmpty) {
       return CartItens.fromJson(maps.first);
     } else {
-      throw Exception('Id $id not found');
+      return CartItens(idProduto: id, isSaved: 'false');
     }
   }
 
@@ -74,6 +74,11 @@ CREATE TABLE $tableCart (
     final db = await instance.database;
     return await db.delete(tableCart,
         where: '${SavedCartItens.idProduto} = ?', whereArgs: [id]);
+  }
+
+  Future<int> deleteAll() async {
+    final db = await instance.database;
+    return await db.delete(tableCart);
   }
 
   // Future close() async {
